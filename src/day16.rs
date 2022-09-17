@@ -38,7 +38,11 @@ fn dance_n_times(
             Instruction::Exchange(l, r) => moves.swap(l, r),
             Instruction::Partner(l, r) => {
                 for val in subs.values_mut() {
-                    *val = if *val == l { r } else if *val == r { l } else { *val };
+                    if *val == l {
+                        *val = r;
+                    } else if *val == r {
+                        *val = l;
+                    }
                 }
             }
         };
