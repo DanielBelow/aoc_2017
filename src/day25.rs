@@ -2,7 +2,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 use std::collections::VecDeque;
 use Direction::{Left, Right};
 
-type StateTransition = fn(&mut VecDeque<u8>, &mut usize) -> char;
+type StateTransition = fn(&mut VecDeque<u8>, &mut usize) -> usize;
 
 #[derive(Copy, Clone)]
 pub enum Direction {
@@ -12,7 +12,6 @@ pub enum Direction {
 
 #[derive(Copy, Clone)]
 pub struct State {
-    name: char,
     if_zero: StateTransition,
     if_one: StateTransition,
 }
@@ -34,21 +33,11 @@ impl StateMachine {
     pub fn step(&mut self) {
         let state = &self.states[self.cur_state];
 
-        let next_state = match self.tape[self.cursor] {
+        self.cur_state = match self.tape[self.cursor] {
             0 => (state.if_zero)(&mut self.tape, &mut self.cursor),
             1 => (state.if_one)(&mut self.tape, &mut self.cursor),
             _ => panic!("Invalid value on tape!"),
         };
-
-        self.cur_state = match next_state {
-            'A' => 0,
-            'B' => 1,
-            'C' => 2,
-            'D' => 3,
-            'E' => 4,
-            'F' => 5,
-            _ => panic!("Invalid next-state!"),
-        }
     }
 }
 
@@ -57,8 +46,8 @@ fn do_work(
     cursor: &mut usize,
     to_write: u8,
     update: Direction,
-    next_state: char,
-) -> char {
+    next_state: usize,
+) -> usize {
     // Write the value
     tape[*cursor] = to_write;
 
@@ -77,7 +66,7 @@ fn do_work(
 
 #[aoc_generator(day25)]
 pub fn generate(_: &str) -> StateMachine {
-    let mut tape = VecDeque::new();
+    let mut tape = VecDeque::with_capacity(4096);
     tape.push_back(0);
 
     let mut state_machine = StateMachine {
@@ -88,39 +77,33 @@ pub fn generate(_: &str) -> StateMachine {
     };
 
     let a_state = State {
-        name: 'A',
-        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 'B'),
-        if_one: |tape, cursor| do_work(tape, cursor, 0, Right, 'C'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 1),
+        if_one: |tape, cursor| do_work(tape, cursor, 0, Right, 2),
     };
 
     let b_state = State {
-        name: 'B',
-        if_zero: |tape, cursor| do_work(tape, cursor, 0, Left, 'A'),
-        if_one: |tape, cursor| do_work(tape, cursor, 0, Right, 'D'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 0, Left, 0),
+        if_one: |tape, cursor| do_work(tape, cursor, 0, Right, 3),
     };
 
     let c_state = State {
-        name: 'C',
-        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 'D'),
-        if_one: |tape, cursor| do_work(tape, cursor, 1, Right, 'A'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 3),
+        if_one: |tape, cursor| do_work(tape, cursor, 1, Right, 0),
     };
 
     let d_state = State {
-        name: 'D',
-        if_zero: |tape, cursor| do_work(tape, cursor, 1, Left, 'E'),
-        if_one: |tape, cursor| do_work(tape, cursor, 0, Left, 'D'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 1, Left, 4),
+        if_one: |tape, cursor| do_work(tape, cursor, 0, Left, 3),
     };
 
     let e_state = State {
-        name: 'E',
-        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 'F'),
-        if_one: |tape, cursor| do_work(tape, cursor, 1, Left, 'B'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 5),
+        if_one: |tape, cursor| do_work(tape, cursor, 1, Left, 1),
     };
 
     let f_state = State {
-        name: 'F',
-        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 'A'),
-        if_one: |tape, cursor| do_work(tape, cursor, 1, Right, 'E'),
+        if_zero: |tape, cursor| do_work(tape, cursor, 1, Right, 0),
+        if_one: |tape, cursor| do_work(tape, cursor, 1, Right, 4),
     };
 
     state_machine.states.push(a_state);
