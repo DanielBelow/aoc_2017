@@ -25,9 +25,11 @@ fn run_steps(
         });
         slice.reverse();
 
-        for offset in 0..length {
-            let index = (*current_position + offset) as usize;
-            nums[index % max_num] = slice[offset as usize];
+        assert_eq!(length, slice.len());
+
+        for (idx, elem) in slice.iter().enumerate() {
+            let index = *current_position + idx;
+            nums[index % max_num] = *elem;
         }
 
         *current_position += length + *skip_size;
@@ -48,7 +50,7 @@ pub fn part1(lengths: &[usize]) -> usize {
 
 fn bitxor_as_hex(nums: &[usize]) -> String {
     let result = nums.iter().fold(0, |acc, it| acc.bitxor(*it));
-    format!("{:02x?}", result)
+    format!("{result:02x?}")
 }
 
 #[aoc(day10, part2)]

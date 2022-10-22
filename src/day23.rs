@@ -66,7 +66,7 @@ impl Instruction {
                 context.program_counter += if cond.evaluate(registers) == 0 {
                     1
                 } else {
-                    *offset as usize
+                    usize::try_from(*offset).unwrap()
                 }
             }
         }
@@ -94,8 +94,9 @@ pub fn part1(insts: &[Instruction]) -> usize {
     context.executed_mul
 }
 
-fn is_prime(num: i64) -> bool {
-    let upper_bound = (num as f64).sqrt() as i64;
+#[allow(clippy::cast_lossless, clippy::cast_possible_truncation)]
+fn is_prime(num: i32) -> bool {
+    let upper_bound = (num as f64).sqrt() as i32;
     for i in 2..=upper_bound {
         if num % i == 0 {
             return false;
