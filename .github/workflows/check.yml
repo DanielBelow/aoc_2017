@@ -19,4 +19,4 @@ jobs:
       - name: clippy
         run: cargo clippy -- -Dwarnings
       - name: Test
-        run: cargo test --verbose
+        run: cargo test --release --verbose
