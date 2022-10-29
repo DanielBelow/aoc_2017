@@ -1,42 +1,6 @@
 use aoc_runner_derive::{aoc, aoc_generator};
+use num_complex::Complex;
 use std::collections::VecDeque;
-
-#[derive(Copy, Clone)]
-pub enum Direction {
-    Up,
-    Right,
-    Down,
-    Left,
-}
-
-impl Direction {
-    fn reverse(self) -> Self {
-        match self {
-            Self::Up => Self::Down,
-            Self::Right => Self::Left,
-            Self::Down => Self::Up,
-            Self::Left => Self::Right,
-        }
-    }
-
-    fn turn_right(self) -> Self {
-        match self {
-            Self::Up => Self::Right,
-            Self::Right => Self::Down,
-            Self::Down => Self::Left,
-            Self::Left => Self::Up,
-        }
-    }
-
-    fn turn_left(self) -> Self {
-        match self {
-            Self::Up => Self::Left,
-            Self::Right => Self::Up,
-            Self::Down => Self::Right,
-            Self::Left => Self::Down,
-        }
-    }
-}
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub enum State {
@@ -120,68 +84,70 @@ pub fn generate(inp: &str) -> Grid {
     Grid { map }
 }
 
-fn move_forward(x: usize, y: usize, dir: Direction, grid: &mut Grid) -> (usize, usize) {
+fn move_forward(pos: Complex<i64>, dir: Complex<i64>, grid: &mut Grid) -> Complex<i64> {
     match dir {
-        Direction::Up => {
-            if x == 0 {
+        Complex { re: -1, im: 0 } => {
+            if pos.re == 0 {
                 grid.grow_top();
-                (x, y)
+                pos
             } else {
-                (x - 1, y)
+                pos + dir
             }
         }
-        Direction::Right => {
-            if y == grid.map[0].len() - 1 {
+        Complex { re: 0, im: 1 } => {
+            if pos.im == (grid.map[0].len() - 1) as i64 {
                 grid.grow_right();
             }
 
-            (x, y + 1)
+            pos + dir
         }
-        Direction::Down => {
-            if x == grid.map.len() - 1 {
+        Complex { re: 1, im: 0 } => {
+            if pos.re == (grid.map.len() - 1) as i64 {
                 grid.grow_bottom();
             }
 
-            (x + 1, y)
+            pos + dir
         }
-        Direction::Left => {
-            if y == 0 {
+        Complex { re: 0, im: -1 } => {
+            if pos.im == 0 {
                 grid.grow_left();
-                (x, y)
+                pos
             } else {
-                (x, y - 1)
+                pos + dir
             }
         }
+        _ => unreachable!(),
     }
 }
 
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 fn run_bursts<FState>(grid: &mut Grid, num_steps: usize, next_state_fn: FState) -> usize
 where
     FState: Fn(State) -> State,
 {
-    let (mut car_x, mut car_y) = (grid.map.len() / 2, grid.map[0].len() / 2);
-    let mut car_dir = Direction::Up;
+    let (car_x, car_y) = (grid.map[0].len() / 2, grid.map.len() / 2);
+
+    let mut pos = Complex::new(car_x as i64, car_y as i64);
+    let mut dir = Complex::new(-1, 0);
 
     let mut grid = grid.clone();
 
     let mut burst_infections = 0;
 
     for _ in 0..num_steps {
-        let cur_node = &mut grid.map[car_x][car_y];
+        let cur_node = &mut grid.map[pos.re as usize][pos.im as usize];
 
-        car_dir = match *cur_node {
-            State::Clean => car_dir.turn_left(),
-            State::Weakened => car_dir,
-            State::Infected => car_dir.turn_right(),
-            State::Flagged => car_dir.reverse(),
+        dir = match *cur_node {
+            State::Clean => dir * Complex::i(),
+            State::Weakened => dir,
+            State::Infected => dir * Complex::new(0, -1),
+            State::Flagged => dir * Complex::i().powi(2),
         };
 
         *cur_node = next_state_fn(*cur_node);
-        if matches!(cur_node, State::Infected) {
-            burst_infections += 1;
-        }
+        burst_infections += usize::from(matches!(cur_node, State::Infected));
 
-        (car_x, car_y) = move_forward(car_x, car_y, car_dir, &mut grid);
+        pos = move_forward(pos, dir, &mut grid);
     }
 
     burst_infections

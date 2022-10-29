@@ -16,11 +16,10 @@ where
     let mut result = 0;
     let mut cur_idx = 0i64;
     while cur_idx >= 0 && cur_idx < input_len {
-        assert!(!cur_idx.is_negative());
         let idx = cur_idx as usize;
 
         let offset = inp[idx];
-        inp[idx] = modify(inp[idx]);
+        inp[idx] = modify(offset);
         cur_idx += offset;
 
         result += 1;

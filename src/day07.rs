@@ -10,38 +10,36 @@ pub struct Program {
 }
 
 impl Program {
-    fn from_simple(s: &str) -> Self {
+    fn from_simple(s: &str) -> Option<Self> {
         let (name, value) = s.split_once(' ').unwrap();
         let value = value
-            .strip_prefix('(')
-            .unwrap()
-            .strip_suffix(')')
-            .unwrap()
+            .strip_prefix('(')?
+            .strip_suffix(')')?
             .parse::<i64>()
             .unwrap();
 
-        Self {
+        Some(Self {
             name: name.to_string(),
             value,
             discs: Vec::new(),
-        }
+        })
     }
 
-    fn with_discs(s: &str) -> Self {
+    fn with_discs(s: &str) -> Option<Self> {
         let (lhs, rhs) = s.split_once(" -> ").unwrap();
 
-        let mut program = Self::from_simple(lhs);
+        let mut program = Self::from_simple(lhs)?;
         program.discs = rhs.split(',').map(|it| it.trim().to_string()).collect_vec();
-        program
+        Some(program)
     }
 }
 
 impl From<&str> for Program {
     fn from(s: &str) -> Self {
         if s.contains("->") {
-            Self::with_discs(s)
+            Self::with_discs(s).expect("Couldn't create Program with discs")
         } else {
-            Self::from_simple(s)
+            Self::from_simple(s).expect("Couldn't create Program from simple")
         }
     }
 }

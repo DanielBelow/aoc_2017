@@ -42,16 +42,16 @@ pub fn part1(inp: &[usize]) -> Option<usize> {
     let mut cache = HashMap::new();
     cache.insert(inp.clone(), 0);
 
-    let mut step = 1;
-    loop {
+    for step in 1.. {
         redistribute_blocks(&mut inp)?;
         if cache.contains_key(&inp) {
             return Some(step);
         }
 
         cache.insert(inp.clone(), step);
-        step += 1;
     }
+
+    unreachable!()
 }
 
 #[aoc(day06, part2)]
@@ -61,16 +61,16 @@ pub fn part2(inp: &[usize]) -> Option<usize> {
     let mut cache = HashMap::new();
     cache.insert(inp.clone(), 0);
 
-    let mut step = 1;
-    loop {
+    for step in 1.. {
         redistribute_blocks(&mut inp)?;
         if let Some(prev) = cache.get(&inp) {
             return Some(step - *prev);
         }
 
         cache.insert(inp.clone(), step);
-        step += 1;
     }
+
+    unreachable!()
 }
 
 #[cfg(test)]

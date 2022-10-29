@@ -1,6 +1,5 @@
-#![allow(clippy::trivially_copy_pass_by_ref)]
-
 use aoc_runner_derive::{aoc, aoc_generator};
+use num_complex::Complex;
 use std::collections::HashMap;
 
 #[aoc_generator(day03)]
@@ -44,6 +43,7 @@ fn get_spiral_directions(inp: usize) -> Vec<Direction> {
 }
 
 #[aoc(day03, part1)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
 pub fn part1(inp: &usize) -> i64 {
     let directions = get_spiral_directions(*inp);
 
@@ -67,21 +67,21 @@ pub fn part1(inp: &usize) -> i64 {
     cur_x.abs() + cur_y.abs()
 }
 
-fn sum_of_neighbours(x: i64, y: i64, cache: &HashMap<(i64, i64), i64>) -> i64 {
-    const OFFSETS: [(i64, i64); 8] = [
-        (-1, 1),
-        (0, 1),
-        (1, 1),
-        (-1, 0),
-        (1, 0),
-        (-1, -1),
-        (0, -1),
-        (1, -1),
+fn sum_of_neighbours(pos: Complex<i64>, cache: &HashMap<Complex<i64>, i64>) -> i64 {
+    const OFFSETS: [Complex<i64>; 8] = [
+        Complex::new(-1, 1),
+        Complex::new(0, 1),
+        Complex::new(1, 1),
+        Complex::new(-1, 0),
+        Complex::new(1, 0),
+        Complex::new(-1, -1),
+        Complex::new(0, -1),
+        Complex::new(1, -1),
     ];
 
     let mut result = 0;
-    for (dx, dy) in OFFSETS {
-        let key = (x + dx, y + dy);
+    for offset in OFFSETS {
+        let key = pos + offset;
         if let Some(val) = cache.get(&key) {
             result += *val;
         }
@@ -91,27 +91,28 @@ fn sum_of_neighbours(x: i64, y: i64, cache: &HashMap<(i64, i64), i64>) -> i64 {
 }
 
 #[aoc(day03, part2)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
 pub fn part2(inp: &usize) -> i64 {
     let directions = get_spiral_directions(*inp);
-    let (mut cur_x, mut cur_y) = (0i64, 0i64);
+    let mut cur_pos = Complex::new(0i64, 0i64);
 
     let mut cache = HashMap::new();
-    cache.insert((0, 0), 1i64);
+    cache.insert(Complex::new(0, 0), 1i64);
 
     for dir in directions {
         match dir {
-            Direction::Up => cur_y += 1,
-            Direction::Right => cur_x += 1,
-            Direction::Down => cur_y -= 1,
-            Direction::Left => cur_x -= 1,
+            Direction::Up => cur_pos.im += 1,
+            Direction::Right => cur_pos.re += 1,
+            Direction::Down => cur_pos.im -= 1,
+            Direction::Left => cur_pos.re -= 1,
         };
 
-        let sum = sum_of_neighbours(cur_x, cur_y, &cache);
+        let sum = sum_of_neighbours(cur_pos, &cache);
         if sum > *inp as i64 {
             return sum;
         }
 
-        cache.insert((cur_x, cur_y), sum);
+        cache.insert(cur_pos, sum);
     }
 
     unreachable!("Didn't hit number larger than input")

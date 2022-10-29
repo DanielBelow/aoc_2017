@@ -1,10 +1,9 @@
 use aoc_runner_derive::aoc;
 use std::str::Chars;
 
-#[allow(clippy::while_let_on_iterator)]
 fn skip_garbage(chrs: &mut Chars<'_>, skipped_chars: &mut u64) {
     let mut ignore_next = false;
-    while let Some(c) = chrs.next() {
+    for c in chrs.by_ref() {
         if ignore_next {
             ignore_next = false;
             continue;
@@ -15,9 +14,7 @@ fn skip_garbage(chrs: &mut Chars<'_>, skipped_chars: &mut u64) {
         }
 
         ignore_next = c == '!';
-        if !ignore_next {
-            *skipped_chars += 1;
-        }
+        *skipped_chars += u64::from(!ignore_next);
     }
 }
 
