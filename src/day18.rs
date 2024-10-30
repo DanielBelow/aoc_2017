@@ -16,8 +16,8 @@ pub enum Value {
 impl Value {
     fn evaluate(self, regs: &mut HashMap<char, i64>) -> i64 {
         match self {
-            Value::Immediate(val) => val,
-            Value::Register(r) => *regs.entry(r).or_default(),
+            Self::Immediate(val) => val,
+            Self::Register(r) => *regs.entry(r).or_default(),
         }
     }
 }
@@ -74,7 +74,7 @@ impl<'a> ExecutionContext<'a> {
         matches!(self.insts[self.pc as usize], Instruction::Rcv(_)) && self.pipe.is_empty()
     }
 
-    fn execute(&mut self, other: Option<&mut ExecutionContext<'a>>) -> ExecutionResult {
+    fn execute(&mut self, other: Option<&mut Self>) -> ExecutionResult {
         assert!(self.pc >= 0 && ((self.pc as usize) < self.insts.len()));
 
         let cur_pc = self.pc as usize;

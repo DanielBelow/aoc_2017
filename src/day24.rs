@@ -22,7 +22,7 @@ fn build_paths(
     cur_node: Node,
     left_is_free: bool,
     available_nodes: &[Node],
-    cur_path: &mut [Node],
+    cur_path: &[Node],
     paths: &mut Vec<Vec<Node>>,
 ) {
     let free_connector = if left_is_free {
@@ -55,7 +55,7 @@ fn build_paths(
             *candidate,
             candidate.rhs == free_connector,
             &rem_nodes,
-            &mut cur_path,
+            &cur_path,
             paths,
         );
     }
@@ -81,7 +81,7 @@ fn find_paths(inp: &[Node]) -> Vec<Vec<Node>> {
             *start_node,
             start_node.rhs == 0,
             &rem_nodes,
-            &mut [*start_node],
+            &[*start_node],
             &mut paths,
         );
     }
@@ -119,13 +119,13 @@ mod tests {
     fn test_sample_p1() {
         let data = generate(TEST_DATA);
         let result = part1(&data);
-        assert_eq!(result.unwrap(), 31);
+        assert_eq!(result, Some(31));
     }
 
     #[test]
     fn test_sample_p2() {
         let data = generate(TEST_DATA);
         let result = part2(&data);
-        assert_eq!(result.unwrap(), 19);
+        assert_eq!(result, Some(19));
     }
 }

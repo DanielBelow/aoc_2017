@@ -10,12 +10,10 @@ enum Direction {
 }
 
 impl Direction {
-    fn is_same_cardinal(self, other: Direction) -> bool {
+    fn is_same_cardinal(self, other: Self) -> bool {
         match self {
-            Direction::Up | Direction::Down => other == Direction::Up || other == Direction::Down,
-            Direction::Right | Direction::Left => {
-                other == Direction::Right || other == Direction::Left
-            }
+            Self::Up | Self::Down => other == Self::Up || other == Self::Down,
+            Self::Right | Self::Left => other == Self::Right || other == Self::Left,
         }
     }
 }
@@ -38,7 +36,7 @@ fn get_new_directions(dir: Direction) -> Vec<Direction> {
     result
 }
 
-fn get_next_coords(row: usize, col: usize, dir: Direction) -> Option<(usize, usize)> {
+const fn get_next_coords(row: usize, col: usize, dir: Direction) -> Option<(usize, usize)> {
     match dir {
         Direction::Up => {
             if row == 0 {

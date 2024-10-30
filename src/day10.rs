@@ -17,7 +17,7 @@ fn run_steps(
 ) {
     let max_num = nums.len();
 
-    for &length in lengths.iter() {
+    for &length in lengths {
         let mut slice = (0..length).fold(Vec::new(), |mut acc, it| {
             let index = *current_position + it;
             acc.push(nums[index % max_num]);

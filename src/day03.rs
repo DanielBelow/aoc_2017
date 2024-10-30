@@ -108,6 +108,8 @@ pub fn part2(inp: &usize) -> i64 {
         };
 
         let sum = sum_of_neighbours(cur_pos, &cache);
+
+        #[allow(clippy::cast_possible_wrap)]
         if sum > *inp as i64 {
             return sum;
         }

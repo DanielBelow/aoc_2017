@@ -15,7 +15,7 @@ pub struct Layer {
 }
 
 impl Layer {
-    fn severity(&self) -> usize {
+    const fn severity(&self) -> usize {
         self.depth * self.range
     }
 }
@@ -118,7 +118,7 @@ mod tests {
                                 6: 4";
         let data = generate(test_data);
         let result = part1(&data);
-        assert_eq!(24, result.unwrap());
+        assert_eq!(result, Some(24));
     }
 
     #[test]
@@ -129,6 +129,6 @@ mod tests {
                                 6: 4";
         let data = generate(test_data);
         let result = part2(&data);
-        assert_eq!(10, result.unwrap());
+        assert_eq!(result, Some(10));
     }
 }

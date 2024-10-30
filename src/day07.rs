@@ -11,12 +11,12 @@ pub struct Program {
 
 impl Program {
     fn from_simple(s: &str) -> Option<Self> {
-        let (name, value) = s.split_once(' ').unwrap();
+        let (name, value) = s.split_once(' ')?;
         let value = value
             .strip_prefix('(')?
             .strip_suffix(')')?
             .parse::<i64>()
-            .unwrap();
+            .ok()?;
 
         Some(Self {
             name: name.to_string(),
@@ -26,7 +26,7 @@ impl Program {
     }
 
     fn with_discs(s: &str) -> Option<Self> {
-        let (lhs, rhs) = s.split_once(" -> ").unwrap();
+        let (lhs, rhs) = s.split_once(" -> ")?;
 
         let mut program = Self::from_simple(lhs)?;
         program.discs = rhs.split(',').map(|it| it.trim().to_string()).collect_vec();

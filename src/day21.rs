@@ -84,10 +84,10 @@ impl Image {
             flipped.push(flipped_row);
         }
 
-        Image::new(&flipped)
+        Self::new(&flipped)
     }
 
-    fn flips_and_rotations(&self) -> Vec<Image> {
+    fn flips_and_rotations(&self) -> Vec<Self> {
         let dim = self.data.len();
 
         let mut res = Vec::new();
@@ -132,7 +132,7 @@ impl Image {
         res
     }
 
-    fn from_parts(parts: &[Vec<Image>]) -> Self {
+    fn from_parts(parts: &[Vec<Self>]) -> Self {
         assert!(!parts.is_empty());
 
         let num_images_per_row = parts[0].len();
@@ -158,7 +158,7 @@ impl Image {
         Self::new(&merged_data)
     }
 
-    fn split(&self) -> Vec<Vec<Image>> {
+    fn split(&self) -> Vec<Vec<Self>> {
         let current_size = self.data.len();
 
         let mut result = vec![];
@@ -181,7 +181,7 @@ impl Image {
                     square[x][y] = self.data[row * split_size + x][col * split_size + y];
                 }
 
-                row_squares.push(Image::new(&square));
+                row_squares.push(Self::new(&square));
             }
 
             result.push(row_squares);
@@ -191,11 +191,10 @@ impl Image {
     }
 
     fn transform(&self, rules: &[Rule]) -> Self {
-        if let Some(rule) = find_matching_rule(rules, self) {
-            rule.to.clone()
-        } else {
-            unreachable!("No matching rule found!")
-        }
+        find_matching_rule(rules, self).map_or_else(
+            || unreachable!("No matching rule found!"),
+            |rule| rule.to.clone(),
+        )
     }
 }
 

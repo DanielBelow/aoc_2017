@@ -9,7 +9,7 @@ pub struct Generator {
 }
 
 impl Generator {
-    fn factor(&self) -> usize {
+    const fn factor(&self) -> usize {
         if self.id == 'A' {
             16807
         } else {
@@ -36,7 +36,7 @@ pub struct GeneratorIntoIterator {
 }
 
 impl GeneratorIntoIterator {
-    fn next_value(&self) -> usize {
+    const fn next_value(&self) -> usize {
         (self.prev_value * self.factor) % 2_147_483_647
     }
 }
@@ -64,7 +64,7 @@ pub fn generate(inp: &str) -> Option<(Generator, Generator)> {
 pub fn part1((gen_a, gen_b): &(Generator, Generator)) -> usize {
     gen_a
         .into_iter()
-        .zip(gen_b.into_iter())
+        .zip(*gen_b)
         .map(|(lhs, rhs)| (lhs as u16, rhs as u16))
         .take(40_000_000)
         .filter(|(lhs, rhs)| *lhs == *rhs)

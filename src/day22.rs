@@ -10,7 +10,7 @@ pub enum State {
     Flagged,
 }
 
-fn next_state(state: State, part_one: bool) -> State {
+const fn next_state(state: State, part_one: bool) -> State {
     match state {
         State::Clean => {
             if part_one {
@@ -95,6 +95,7 @@ fn move_forward(pos: Complex<i64>, dir: Complex<i64>, grid: &mut Grid) -> Comple
             }
         }
         Complex { re: 0, im: 1 } => {
+            #[allow(clippy::cast_possible_wrap)]
             if pos.im == (grid.map[0].len() - 1) as i64 {
                 grid.grow_right();
             }
@@ -102,6 +103,7 @@ fn move_forward(pos: Complex<i64>, dir: Complex<i64>, grid: &mut Grid) -> Comple
             pos + dir
         }
         Complex { re: 1, im: 0 } => {
+            #[allow(clippy::cast_possible_wrap)]
             if pos.re == (grid.map.len() - 1) as i64 {
                 grid.grow_bottom();
             }
@@ -121,12 +123,13 @@ fn move_forward(pos: Complex<i64>, dir: Complex<i64>, grid: &mut Grid) -> Comple
 }
 
 #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-fn run_bursts<FState>(grid: &mut Grid, num_steps: usize, next_state_fn: FState) -> usize
+fn run_bursts<FState>(grid: &Grid, num_steps: usize, next_state_fn: FState) -> usize
 where
     FState: Fn(State) -> State,
 {
     let (car_x, car_y) = (grid.map[0].len() / 2, grid.map.len() / 2);
 
+    #[allow(clippy::cast_possible_wrap)]
     let mut pos = Complex::new(car_x as i64, car_y as i64);
     let mut dir = Complex::new(-1, 0);
 
@@ -155,12 +158,12 @@ where
 
 #[aoc(day22, part1)]
 pub fn part1(grid: &Grid) -> usize {
-    run_bursts(&mut grid.clone(), 10_000, |it| next_state(it, true))
+    run_bursts(grid, 10_000, |it| next_state(it, true))
 }
 
 #[aoc(day22, part2)]
 pub fn part2(grid: &Grid) -> usize {
-    run_bursts(&mut grid.clone(), 10_000_000, |it| next_state(it, false))
+    run_bursts(grid, 10_000_000, |it| next_state(it, false))
 }
 
 #[cfg(test)]
@@ -172,8 +175,8 @@ mod tests {
         let inp = "..#\n\
                           #..\n\
                           ...";
-        let mut data = generate(inp);
-        let result = run_bursts(&mut data, 10_000, |state| next_state(state, true));
+        let data = generate(inp);
+        let result = run_bursts(&data, 10_000, |state| next_state(state, true));
         assert_eq!(result, 5587);
     }
 
@@ -182,11 +185,11 @@ mod tests {
         let inp = "..#\n\
                           #..\n\
                           ...";
-        let mut data = generate(inp);
-        let result = run_bursts(&mut data.clone(), 100, |state| next_state(state, false));
+        let data = generate(inp);
+        let result = run_bursts(&data, 100, |state| next_state(state, false));
         assert_eq!(result, 26);
 
-        let result = run_bursts(&mut data, 10_000_000, |state| next_state(state, false));
+        let result = run_bursts(&data, 10_000_000, |state| next_state(state, false));
         assert_eq!(result, 2_511_944);
     }
 }

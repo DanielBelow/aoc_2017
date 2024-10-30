@@ -2,7 +2,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
 use parse_display::{Display, FromStr};
 
-fn reg_to_index(reg: char) -> usize {
+const fn reg_to_index(reg: char) -> usize {
     (reg as u8 - b'a') as usize
 }
 
@@ -23,10 +23,10 @@ pub enum Value {
 }
 
 impl Value {
-    fn evaluate(&self, registers: &[i64]) -> i64 {
+    const fn evaluate(&self, registers: &[i64]) -> i64 {
         match self {
-            Value::Immediate(val) => *val,
-            Value::Register(r) => registers[reg_to_index(*r)],
+            Self::Immediate(val) => *val,
+            Self::Register(r) => registers[reg_to_index(*r)],
         }
     }
 }
@@ -49,24 +49,24 @@ pub enum Instruction {
 impl Instruction {
     fn evaluate(&self, registers: &mut [i64; 8], context: &mut EvaluationContext) {
         match self {
-            Instruction::Set { reg, value } => {
+            Self::Set { reg, value } => {
                 registers[reg_to_index(*reg)] = value.evaluate(registers);
                 context.program_counter += 1;
             }
-            Instruction::Sub { reg, value } => {
+            Self::Sub { reg, value } => {
                 registers[reg_to_index(*reg)] -= value.evaluate(registers);
                 context.program_counter += 1;
             }
-            Instruction::Mul { reg, value } => {
+            Self::Mul { reg, value } => {
                 context.executed_mul += 1;
                 registers[reg_to_index(*reg)] *= value.evaluate(registers);
                 context.program_counter += 1;
             }
-            Instruction::Jnz { cond, offset } => {
+            Self::Jnz { cond, offset } => {
                 context.program_counter += if cond.evaluate(registers) == 0 {
                     1
                 } else {
-                    usize::try_from(*offset).unwrap()
+                    usize::try_from(*offset).expect("Non-negative offset")
                 }
             }
         }

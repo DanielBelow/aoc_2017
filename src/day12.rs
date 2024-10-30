@@ -9,11 +9,11 @@ pub fn generate(inp: &str) -> Vec<HashSet<usize>> {
         .map(|it| {
             let split = it.split(" <-> ").collect_vec();
             assert_eq!(split.len(), 2);
-            let lhs = split[0].parse::<usize>().unwrap();
+            let lhs = split[0].parse::<usize>().expect("LHS split is a number");
 
             let rhs = split[1]
                 .split(", ")
-                .map(|it| it.parse::<usize>().unwrap())
+                .map(|it| it.parse::<usize>().expect("RHS splits are numbers"))
                 .collect_vec();
 
             assert!(!rhs.is_empty());
@@ -37,7 +37,7 @@ pub fn part1(components: &[HashSet<usize>]) -> Option<usize> {
 }
 
 #[aoc(day12, part2)]
-pub fn part2(components: &[HashSet<usize>]) -> usize {
+pub const fn part2(components: &[HashSet<usize>]) -> usize {
     components.len()
 }
 
@@ -57,7 +57,7 @@ mod tests {
         let data = generate(inp);
         let result = part1(&data);
 
-        assert_eq!(result.unwrap(), 6);
+        assert_eq!(result, Some(6));
     }
 
     #[test]

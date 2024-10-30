@@ -30,15 +30,15 @@ struct Cell {
 }
 
 impl Cell {
-    fn new(q: isize, r: isize, s: isize) -> Self {
+    const fn new(q: isize, r: isize, s: isize) -> Self {
         Self { q, r, s }
     }
 
-    fn distance(&self, other: &Cell) -> usize {
+    const fn distance(&self, other: &Self) -> usize {
         (self.q.abs_diff(other.q) + self.r.abs_diff(other.r) + self.s.abs_diff(other.s)) / 2
     }
 
-    fn walk(&self, direction: Direction) -> Self {
+    const fn walk(&self, direction: Direction) -> Self {
         match direction {
             Direction::North => Self::new(self.q, self.r - 1, self.s + 1),
             Direction::NorthEast => Self::new(self.q + 1, self.r - 1, self.s),

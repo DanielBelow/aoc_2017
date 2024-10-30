@@ -67,7 +67,7 @@ fn part1_impl(insts: &[Instruction], num_programs: u8) -> String {
 
     dance_n_times(insts, 1, letters)
         .iter()
-        .map(std::string::ToString::to_string)
+        .map(ToString::to_string)
         .join("")
 }
 
@@ -76,7 +76,7 @@ fn part2_impl(insts: &[Instruction], num_programs: u8) -> String {
 
     dance_n_times(insts, 1_000_000_000, letters)
         .iter()
-        .map(std::string::ToString::to_string)
+        .map(ToString::to_string)
         .join("")
 }
 

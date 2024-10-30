@@ -27,12 +27,12 @@ pub enum Condition {
 impl Condition {
     fn evaluate(&self, registers: &mut HashMap<String, i64>) -> bool {
         match self {
-            Condition::Eq(reg, val) => *registers.entry(reg.clone()).or_insert(0) == *val,
-            Condition::NEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) != *val,
-            Condition::Gt(reg, val) => *registers.entry(reg.clone()).or_insert(0) > *val,
-            Condition::Lt(reg, val) => *registers.entry(reg.clone()).or_insert(0) < *val,
-            Condition::GEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) >= *val,
-            Condition::LEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) <= *val,
+            Self::Eq(reg, val) => *registers.entry(reg.clone()).or_insert(0) == *val,
+            Self::NEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) != *val,
+            Self::Gt(reg, val) => *registers.entry(reg.clone()).or_insert(0) > *val,
+            Self::Lt(reg, val) => *registers.entry(reg.clone()).or_insert(0) < *val,
+            Self::GEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) >= *val,
+            Self::LEq(reg, val) => *registers.entry(reg.clone()).or_insert(0) <= *val,
         }
     }
 }
@@ -49,8 +49,8 @@ pub enum Operation {
 impl Operation {
     fn evaluate(&self, registers: &mut HashMap<String, i64>) {
         match self {
-            Operation::Inc(name, val) => *registers.entry(name.clone()).or_insert(0) += *val,
-            Operation::Dec(name, val) => *registers.entry(name.clone()).or_insert(0) -= *val,
+            Self::Inc(name, val) => *registers.entry(name.clone()).or_insert(0) += *val,
+            Self::Dec(name, val) => *registers.entry(name.clone()).or_insert(0) -= *val,
         }
     }
 }

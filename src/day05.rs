@@ -11,6 +11,7 @@ fn count_num_steps<F>(inp: &mut [i64], modify: F) -> i64
 where
     F: Fn(i64) -> i64,
 {
+    #[allow(clippy::cast_possible_wrap)]
     let input_len = inp.len() as i64;
 
     let mut result = 0;

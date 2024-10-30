@@ -20,7 +20,7 @@ impl AddAssign for Vec3d {
 }
 
 impl Mul<i64> for Vec3d {
-    type Output = Vec3d;
+    type Output = Self;
 
     fn mul(self, rhs: i64) -> Self::Output {
         let mut new_pos = self;
@@ -43,7 +43,7 @@ pub struct Particle {
 }
 
 impl Particle {
-    fn distance(&self) -> i64 {
+    const fn distance(&self) -> i64 {
         self.position.x.abs() + self.position.y.abs() + self.position.z.abs()
     }
 

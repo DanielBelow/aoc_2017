@@ -83,13 +83,13 @@ mod tests {
     fn test_sample_p1() {
         let data = generate(TEST_INPUT);
         let res = part1(&data);
-        assert_eq!(res.unwrap(), 5);
+        assert_eq!(res, Some(5));
     }
 
     #[test]
     fn test_sample_p2() {
         let data = generate(TEST_INPUT);
         let res = part2(&data);
-        assert_eq!(res.unwrap(), 4);
+        assert_eq!(res, Some(4));
     }
 }
